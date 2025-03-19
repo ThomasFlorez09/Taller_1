@@ -230,15 +230,20 @@ st.subheader("Puntos de Depósito con Más Transacciones")
 # Mostrar tabla en Streamlit
 st.write(df_locations.head())
 
-# Crear gráfico de barras
-fig, ax = plt.subplots(figsize=(12, 6))
-ax.barh(df_locations["maplocation_name"], df_locations["num_transacciones"], color="yellow")
+# Crear gráfico circular
+fig, ax = plt.subplots(figsize=(8, 8))  # Tamaño del gráfico circular
 
-# Etiquetas y título
-ax.set_xlabel("Número de Transacciones")
-ax.set_ylabel("Punto de Depósito")
+# Graficar el gráfico circular
+ax.pie(
+    df_locations["num_transacciones"],  # Valores (número de transacciones)
+    labels=df_locations["maplocation_name"],  # Etiquetas (nombres de los puntos de depósito)
+    autopct='%1.1f%%',  # Mostrar porcentajes con un decimal
+    colors=plt.cm.Paired.colors,  # Paleta de colores
+    startangle=90  # Iniciar el gráfico desde el ángulo 90°
+)
+
+# Título
 ax.set_title("Top Puntos de Depósito con Más Transacciones")
-ax.invert_yaxis()  # Para ordenar de mayor a menor
 
 # Mostrar gráfico en Streamlit
 st.pyplot(fig)
@@ -251,9 +256,6 @@ df_savings = df.group_by("maplocation_name").agg(pl.sum("operation_value").alias
 st.subheader("Puntos de Depósito con Mayores Ahorros")
 
 st.write("Posteriormente, se establece revisa en que punto se presenta un mayor ahorro total. A continuación, se presentan los datos y la información correspondiente.")
-
-# Mostrar tabla en Streamlit
-st.write(df_savings.head())
 
 # Crear gráfico de barras
 fig, ax = plt.subplots(figsize=(12, 6))
@@ -269,7 +271,6 @@ ax.invert_yaxis()  # Para ordenar de mayor a menor
 
 # Mostrar gráfico en Streamlit
 st.pyplot(fig)
-
 st.write("Si bien el comportamiento presentado es similar al de la métrica anterior en cuanto al orden de las ubicaciones, en este caso se presenta una mayor diferencia en cuanto al dinero recaudado entre los dos "
 "centros comerciales a pesar de que el número de transacciones realizadas en esto puntos es muy cercano. El CC Plaza de las Américas  - Plaza Mariposa presenta un mayor ahorro con 112.241.000 depositados en este punto.")
 
@@ -289,12 +290,10 @@ df_monthly = df_monthly.sort("month")
 st.write(df_monthly.head())
 
 fig, ax = plt.subplots()
-ax.bar(df_monthly["month"], df_monthly["transaction_count"], color="skyblue")
+ax.pie(df_monthly["transaction_count"], labels=df_monthly["month"], autopct='%1.1f%%', colors=plt.cm.Paired.colors, startangle=90)
 
-# Etiquetas y título
-ax.set_xlabel("Mes")
-ax.set_ylabel("Cantidad de Transacciones")
-ax.set_title("Número de Transacciones por Mes")
+# Título
+ax.set_title("Distribución de Transacciones por Mes")
 
 # Mostrar en Streamlit
 st.pyplot(fig)
